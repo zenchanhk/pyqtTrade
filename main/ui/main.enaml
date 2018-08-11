@@ -1,0 +1,105 @@
+from enaml.widgets.api import Window, Field, Container, ObjectCombo, Label, PushButton
+from enaml.layout.api import vbox, hbox, spacer, align
+from enaml.icon import Icon, IconImage
+from enaml.image import Image
+import qtawesome as qta
+from enaml.styling import (
+    StyleSheet, Style, Setter
+)
+import os
+
+import qtawesome as qta
+from PyQt5.QtGui import QIcon, QImage
+from PyQt5.QtCore import QByteArray, QBuffer
+
+
+def image(name):    
+    dirname = os.path.dirname(__file__)
+    #return os.path.join(dirname, 'images', name)
+    path = os.path.join(dirname, 'images', name)
+    b = open(path, 'rb').read()
+    #print(b)
+    return b
+
+def icon(name):
+    fa_icon = qta.icon('fa.flag')
+    image = QImage(fa_icon.pixmap(20,20).toImage())
+    ba = QByteArray()
+    buffer = QBuffer(ba)
+    image.save(buffer)
+    #print(ba.data())
+    return ba.data()
+
+enamldef AppSheet(StyleSheet):
+    Style:
+        element = 'PushButton, Field, ObjectCombo, Label'
+        Setter:
+            field = 'font-size'
+            value = '20px'
+        Setter:
+            field = 'padding'
+            value = '2px'
+        Setter:
+            field = 'border-style'
+            value = 'solid'
+        Setter:
+            field = 'border-width'
+            value = '2px'
+        Setter:
+            field = 'border-color'
+            value = 'transparent'
+    Style:
+        element = 'PushButton, Field, ObjectCombo'
+        Setter:
+            field = 'border-radius'
+            value = '5px'
+        Setter:
+            field = 'background-color'
+            value = 'lineargradient(red, yellow)'
+    Style:      
+        element = 'PushButton, Field, ObjectCombo'
+        pseudo_class = 'focus'
+        Setter:
+            field = 'border-color'
+            value = '#4286f4'
+    Style:
+        element = 'ObjectCombo'
+        pseudo_element = 'down-button'
+        Setter:
+            field = 'color'
+            value = 'red'
+        
+    Style:      
+        element = 'ObjectCombo'
+        pseudo_element = 'down-button'
+        Setter:
+            field = 'background'
+            value = 'lightblue'
+        
+enamldef Main(Window):
+    title = 'IB Trader'
+    
+    #icon = Icon(images = [IconImage(image=Image(data=open(image_path('stock.ico'), 'rb').read()))])
+    icon = Icon(images=[IconImage(image=Image(data=image('stock.ico')))])
+    #icon = Icon(images = [IconImage(image=Image(data=icon('fa.flag')))])
+    Container:
+
+        constraints = [
+            vbox(
+                hbox(label, combo_align, spacer),
+                hbox(field, spacer),
+            ),
+            align('v_center', label, combo_align),
+            field.width == 300,
+        ]
+
+        Label: label:
+            text = 'text_align:'
+
+        ObjectCombo: combo_align:
+            items = ['Buy', 'Sell']
+            selected = 'Buy'
+
+        Field: field:
+            placeholder = 'Enter code...'
+            
